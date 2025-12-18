@@ -1,5 +1,5 @@
 import requests
-from app.config import BASE_URL, PHONE_NUMBER_ID, WHATSAPP_TOKEN
+from .config import BASE_URL, PHONE_NUMBER_ID, WHATSAPP_TOKEN
 
 def send_message(to, body, buttons=None):
     payload = {
