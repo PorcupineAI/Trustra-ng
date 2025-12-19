@@ -1,12 +1,3 @@
-from fastapi.responses import FileResponse
-
-@app.get("/privacy-policy")
-async def privacy_policy():
-    return FileResponse("privacy_policy.html")
-
-@app.get("/terms-of-service")
-async def terms():
-    return FileResponse("terms.html")
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 import os
