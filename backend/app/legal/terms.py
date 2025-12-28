@@ -1,7 +1,3 @@
-from fastapi import APIRouter
-
-router = APIRouter()
-
-@router.get("/terms")
-def terms():
-    return {"terms": "Trustra-NG provides escrow coordination only."}
+TERMS = """
+Trustra is a neutral technology platform and does not guarantee transactions.
+"""
