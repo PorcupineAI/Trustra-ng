@@ -1,3 +1,4 @@
+@@ -0,0 +1,12 @@
 CREATE TABLE IF NOT EXISTS fraud_signals (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID,
