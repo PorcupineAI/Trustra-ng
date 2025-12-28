@@ -1,47 +1,16 @@
 import requests
-from .config import BASE_URL, PHONE_NUMBER_ID, WHATSAPP_TOKEN
+from app.config import WHATSAPP_TOKEN, WHATSAPP_PHONE_ID
 
-def send_message(to, body, buttons=None):
+def send_message(to, text):
+    url = f"https://graph.facebook.com/v19.0/{WHATSAPP_PHONE_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "Content-Type": "application/json"
+    }
     payload = {
         "messaging_product": "whatsapp",
         "to": to,
-        "type": "interactive" if buttons else "text",
-        "text": {"body": body}
+        "type": "text",
+        "text": {"body": text}
     }
-
-    if buttons:
-        payload["interactive"] = {
-            "type": "button",
-            "body": {"text": body},
-            "action": {"buttons": buttons}
-        }
-
-    requests.post(
-        f"{BASE_URL}/{PHONE_NUMBER_ID}/messages",
-        headers={
-            "Authorization": f"Bearer {WHATSAPP_TOKEN}",
-            "Content-Type": "application/json"
-        },
-        json=payload
-    )
-
-def handle_message(data):
-    try:
-        msg = data["entry"][0]["changes"][0]["value"]["messages"][0]
-        phone = msg["from"]
-        text = msg["text"]["body"].lower()
-
-        if "verify" in text:
-            send_message(phone, "Seller verified. Trust Score: 65/100")
-
-        elif "escrow" in text:
-            send_message(
-                phone,
-                "Use Escrow?",
-                buttons=[
-                    {"type":"reply","reply":{"id":"ESCROW_YES","title":"Use Escrow"}},
-                    {"type":"reply","reply":{"id":"ESCROW_NO","title":"No"}}
-                ]
-            )
-    except:
-        pass
+    return requests.post(url, headers=headers, json=payload).json()
