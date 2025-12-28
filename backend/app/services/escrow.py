@@ -1,8 +1,6 @@
+from app.services.monetization import calculate_fee
+
 def create_escrow(amount):
-    fee = int(amount * 0.018)
-    return {
-        "amount": amount,
-        "fee": fee,
-        "net": amount - fee,
-        "status": "HELD"
-    }
+    fee = calculate_fee(amount)
+    net_amount = amount - fee
+    return fee, net_amount
