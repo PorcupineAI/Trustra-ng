@@ -1,9 +1,19 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-import os
+from sqlalchemy.orm import declarative_base, sessionmaker
+from app.config import DATABASE_URL
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    pool_recycle=300,
+)
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
+def init_db():
+    from app.models.user import User
+    from app.models.escrow import Escrow
+    from app.models.revenue import Revenue
+
+    Base.metadata.create_all(bind=engine)
