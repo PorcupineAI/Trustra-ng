@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.post("/register")
-def register_user(phone: str, role: str):
-    return {"phone": phone, "role": role, "status": "registered"}
+@router.get("/")
+def list_users():
+    return {"status": "ok"}
