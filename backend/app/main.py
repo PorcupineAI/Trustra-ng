@@ -1,4 +1,4 @@
- from fastapi import FastAPI
+from fastapi import FastAPI
 
 from app.routes.users import router as users_router
 from app.routes.escrow import router as escrow_router
