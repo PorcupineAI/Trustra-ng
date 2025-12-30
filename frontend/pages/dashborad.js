@@ -1,10 +1,10 @@
+import { useEffect, useState } from "react";
 import { getToken } from "../lib/auth";
-import { useEffect } from "react";
 
 export default function Dashboard() {
   useEffect(() => {
-    if (!getToken()) window.location.href = "/login";
+    if (!getToken()) location.href = "/login";
   }, []);
 
-  return <h1>Welcome to Trustra Dashboard</h1>;
+  return <h1>User Escrow Dashboard</h1>;
 }
