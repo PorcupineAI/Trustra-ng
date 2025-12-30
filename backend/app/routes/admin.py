@@ -1,27 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 from app.database import get_db
 from app.models.user import User
-from app.models.escrow import Escrow
+from app.intelligence.trust_score import calculate_trust_score
+from app.intelligence.fraud import fraud_flags
+from app.intelligence.risk_engine import risk_level
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
-def admin_only(user=Depends(get_current_user)):
-    if not user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin only")
-    return user
+@router.get("/risk-dashboard")
+def risk_dashboard(db=Depends(get_db)):
+    users = db.query(User).all()
+    report = []
 
-@router.get("/users")
-def list_users(db: Session = Depends(get_db), admin=Depends(admin_only)):
-    return db.query(User).all()
+    for u in users:
+        trust = calculate_trust_score(u)
+        flags = fraud_flags(u)
+        report.append({
+            "user_id": u.id,
+            "trust_score": trust,
+            "flags": flags,
+            "risk": risk_level(trust, flags)
+        })
 
-@router.get("/escrows")
-def list_escrows(db: Session = Depends(get_db), admin=Depends(admin_only)):
-    return db.query(Escrow).all()
-
-@router.post("/flag-user/{user_id}")
-def flag_user(user_id: int, db: Session = Depends(get_db), admin=Depends(admin_only)):
-    user = db.query(User).get(user_id)
-    user.flagged = True
-    db.commit()
-    return {"status": "flagged"}
+    return report
