@@ -1,25 +1,19 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models.user import User
-from app.intelligence.trust_score import calculate_trust_score
-from app.intelligence.fraud import fraud_flags
-from app.intelligence.risk_engine import risk_level
+from app.models.escrow import Escrow
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/admin")
 
-@router.get("/risk-dashboard")
-def risk_dashboard(db=Depends(get_db)):
-    users = db.query(User).all()
-    report = []
+@router.get("/risk")
+def risk_dashboard(db: Session = Depends(get_db)):
+    flagged = db.query(Escrow).filter(Escrow.requires_admin == True).all()
+    return flagged
 
-    for u in users:
-        trust = calculate_trust_score(u)
-        flags = fraud_flags(u)
-        report.append({
-            "user_id": u.id,
-            "trust_score": trust,
-            "flags": flags,
-            "risk": risk_level(trust, flags)
-        })
-
-    return report
+@router.post("/resolve/{escrow_id}")
+def resolve_escrow(escrow_id: int, approve: bool, db: Session = Depends(get_db)):
+    escrow = db.query(Escrow).get(escrow_id)
+    escrow.status = "released" if approve else "rejected"
+    escrow.requires_admin = False
+    db.commit()
+    return {"status": escrow.status}
