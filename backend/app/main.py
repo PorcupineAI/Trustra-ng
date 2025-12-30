@@ -1,13 +1,8 @@
-from app.routes.auth import router as auth_router
-app.include_router(auth_router)
 from fastapi import FastAPI
+from app.routes import auth, escrow, admin
 
-from app.routes.users import router as users_router
-from app.routes.escrow import router as escrow_router
-from app.routes.webhook import router as webhook_router
+app = FastAPI()
 
-app = FastAPI(title="Trustra NG API")
-
-app.include_router(users_router)
-app.include_router(escrow_router)
-app.include_router(webhook_router)
+app.include_router(auth.router)
+app.include_router(escrow.router)
+app.include_router(admin.router)
