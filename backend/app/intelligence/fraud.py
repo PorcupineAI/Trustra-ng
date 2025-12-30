@@ -1,13 +1,10 @@
-def evaluate_user(user):
-    risk = 0
+def fraud_flags(user):
+    flags = []
 
-    if user.failed_transactions > 2:
-        risk += 30
+    if user.failed_verifications > 3:
+        flags.append("verification_abuse")
 
-    if user.escrow_disputes > 1:
-        risk += 40
+    if user.disputes > 2:
+        flags.append("high_dispute_risk")
 
-    if user.account_age_days < 7:
-        risk += 20
-
-    return risk
+    return flags
