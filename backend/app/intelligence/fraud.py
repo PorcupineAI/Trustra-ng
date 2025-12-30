@@ -1,10 +1,16 @@
-def fraud_flags(user):
-    flags = []
+def predict_fraud(user, escrow):
+    score = 0
 
-    if user.failed_verifications > 3:
-        flags.append("verification_abuse")
+    if user.trust_score < 40:
+        score += 30
 
-    if user.disputes > 2:
-        flags.append("high_dispute_risk")
+    if escrow.amount > 1_000_000:
+        score += 25
 
-    return flags
+    if escrow.is_disputed:
+        score += 20
+
+    if user.failed_transactions > 3:
+        score += 25
+
+    return min(score, 100)
