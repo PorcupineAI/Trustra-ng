@@ -1,25 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
-from decimal import Decimal
-from app.services.monetization import calculate_escrow_fee
 from app.database import get_db
-from app.models.revenue import Revenue
+from app.models.escrow import Escrow
+from app.services.escrow import release_escrow
 
 router = APIRouter(prefix="/escrow", tags=["Escrow"])
 
-@router.post("/create")
-def create_escrow(amount: Decimal, db=Depends(get_db)):
-    fee = calculate_escrow_fee(amount)
-    net = amount - fee
-
-    db.add(Revenue(
-        source="escrow",
-        amount=fee,
-        reference="escrow_fee"
-    ))
+@router.post("/{escrow_id}/dispute")
+def dispute_escrow(escrow_id: int, db=Depends(get_db)):
+    escrow = db.query(Escrow).get(escrow_id)
+    escrow.status = "DISPUTED"
     db.commit()
+    return {"status": "DISPUTED"}
 
-    return {
-        "amount": amount,
-        "fee": fee,
-        "net_held": net
-    }
+@router.post("/{escrow_id}/arbitrate")
+def arbitrate(escrow_id: int, decision: str, db=Depends(get_db)):
+    escrow = db.query(Escrow).get(escrow_id)
+    release_escrow(escrow, decision)
+    db.commit()
+    return {"final_status": escrow.status}
