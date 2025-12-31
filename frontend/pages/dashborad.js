@@ -1,10 +1,17 @@
-import { useEffect, useState } from "react";
-import { getToken } from "../lib/auth";
+// frontend/pages/dashboard.js
+import React, { useEffect, useState } from "react";
 
 export default function Dashboard() {
+  const [message, setMessage] = useState("");
+
   useEffect(() => {
-    if (!getToken()) location.href = "/login";
+    fetch("/").then(res => res.json()).then(data => setMessage(data.message));
   }, []);
 
-  return <h1>User Escrow Dashboard</h1>;
+  return (
+    <div>
+      <h1>Trustra-NG Dashboard</h1>
+      <p>{message}</p>
+    </div>
+  );
 }
