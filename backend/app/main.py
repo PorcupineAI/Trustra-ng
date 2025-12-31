@@ -1,8 +1,12 @@
+# backend/app/main.py
 from fastapi import FastAPI
-from app.routes import auth, escrow, admin
+from app.database import init_db
 
-app = FastAPI()
+app = FastAPI(title="Trustra-NG Backend")
 
-app.include_router(auth.router)
-app.include_router(escrow.router)
-app.include_router(admin.router)
+# Initialize database with constraints
+init_db()
+
+@app.get("/")
+async def root():
+    return {"message": "Trustra-NG backend with enforced constraints is live!"}
