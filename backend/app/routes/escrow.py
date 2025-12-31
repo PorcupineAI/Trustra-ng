@@ -1,19 +1,13 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models.escrow import Escrow
-from app.services.escrow_engine import process_escrow
+from fastapi import APIRouter
+from app.services.monetization import escrow_fee
 
-router = APIRouter(prefix="/escrow")
+router = APIRouter()
 
-@router.post("/release/{escrow_id}")
-def release_escrow(escrow_id: int, db: Session = Depends(get_db)):
-    escrow = db.query(Escrow).get(escrow_id)
-    user = escrow.user
-
-    fraud_score = process_escrow(escrow, user, db)
-
+@router.get("/dashboard")
+def dashboard_summary():
     return {
-        "status": escrow.status,
-        "fraud_score": fraud_score
+        "total_users": 124,
+        "active_escrows": 17,
+        "revenue_today": 35200,
+        "escrow_fee_example": escrow_fee(100000)
     }
