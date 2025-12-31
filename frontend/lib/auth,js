@@ -1,11 +1,11 @@
-// Save auth token (JWT or session token)
+// frontend/lib/auth.js
+
 export function setToken(token) {
   if (typeof window !== "undefined") {
     localStorage.setItem("trustra_token", token);
   }
 }
 
-// Get auth token
 export function getToken() {
   if (typeof window !== "undefined") {
     return localStorage.getItem("trustra_token");
@@ -13,7 +13,6 @@ export function getToken() {
   return null;
 }
 
-// Remove token (logout)
 export function clearToken() {
   if (typeof window !== "undefined") {
     localStorage.removeItem("trustra_token");
