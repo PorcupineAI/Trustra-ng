@@ -1,12 +1,8 @@
-from sqlalchemy import Column, Integer, Numeric, String, DateTime, func
+from sqlalchemy import Column, Integer, Float
+from app.services.constraints import RevenueConstraints
 from app.database import Base
 
-class Revenue(Base):
-    __tablename__ = "revenue"
-
-    id = Column(Integer, primary_key=True)
-    source = Column(String, nullable=False)  # escrow, verification
-    amount = Column(Numeric, nullable=False)
-    reference = Column(String, nullable=True)
-    created_at = Column(DateTime, server_default=func.now())
-
+class Revenue(Base, RevenueConstraints):
+    __tablename__ = 'revenue'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    amount = Column(Float, nullable=False)
