@@ -1,19 +1,22 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from app.config import settings
+from app.db.base import Base
 
-DATABASE_URL = "postgresql://username:password@<neon_host>:5432/trustra_ng"
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
-# Base import for models
-from app.models.user import User
-from app.models.escrow import Escrow
-from app.models.revenue import Revenue
-from app.models.playing_with_neon import PlayingWithNeon
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def init_db():
-    User.metadata.create_all(bind=engine)
-    Escrow.metadata.create_all(bind=engine)
-    Revenue.metadata.create_all(bind=engine)
-    PlayingWithNeon.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
