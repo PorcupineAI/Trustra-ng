@@ -1,18 +1,21 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 from app.config import settings
-from app.db.base import Base
 
 engine = create_engine(
     settings.DATABASE_URL,
-    pool_pre_ping=True
+    pool_pre_ping=True,
+    future=True,
 )
 
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=engine,
 )
+
+Base = declarative_base()
+
 
 def get_db():
     db = SessionLocal()
@@ -20,6 +23,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-def init_db():
-    Base.metadata.create_all(bind=engine)
