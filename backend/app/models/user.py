@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String
-from app.services.constraints import UserConstraints
-from app.database import Base
+from sqlalchemy import Column, Integer, String, Boolean
+from app.db.base import Base
 
-class User(Base, UserConstraints):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    phone = Column(String(20), nullable=False)
-    name = Column(String(100), nullable=True)
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    phone = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=True)
+    is_verified = Column(Boolean, default=False)
