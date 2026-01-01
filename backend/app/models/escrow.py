@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey
-from app.services.constraints import EscrowConstraints
-from app.database import Base
+from app.db.base import Base
 
-class Escrow(Base, EscrowConstraints):
-    __tablename__ = 'escrow'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    amount = Column(Float, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
+class Escrow(Base):
+    __tablename__ = "escrow"
+
+    id = Column(Integer, primary_key=True, index=True)
+    buyer_id = Column(Integer)
+    seller_id = Column(Integer)
+    amount = Column(Float)
