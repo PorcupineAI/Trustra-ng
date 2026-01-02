@@ -1,10 +1,7 @@
-from fastapi import APIRouter, Depends
-from app.services.verification import charge_verification
-from app.database import get_db
+from fastapi import APIRouter
 
-router = APIRouter(prefix="/webhook", tags=["Webhook"])
+router = APIRouter(prefix="/webhook", tags=["webhook"])
 
-@router.post("/whatsapp/verified")
-def whatsapp_verified(user_id: int, db=Depends(get_db)):
-    charge_verification(db, user_id)
-    return {"status": "verified"}
+@router.post("/")
+def webhook_receiver():
+    return {"status": "webhook ok"}
