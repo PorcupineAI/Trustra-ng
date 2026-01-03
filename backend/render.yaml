@@ -2,19 +2,20 @@ services:
   - type: web
     name: trustra-backend
     env: python
-    region: oregon  # Oregon is most reliable
+    region: oregon
     plan: free
+    pythonVersion: 3.11.0  # ⬅️ THIS FORCES PYTHON VERSION
     buildCommand: |
-      pip install --upgrade pip
+      python --version
+      pip install --upgrade pip setuptools wheel
       pip install --no-cache-dir -r requirements.txt
     startCommand: |
+      # Run migrations
       python -c "
-      import os
-      from alembic.config import Config
-      from alembic import command
-      
-      # Run migrations safely
       try:
+          import os
+          from alembic.config import Config
+          from alembic import command
           cfg = Config('alembic.ini')
           cfg.set_main_option('sqlalchemy.url', os.getenv('DATABASE_URL', ''))
           command.upgrade(cfg, 'head')
@@ -22,6 +23,7 @@ services:
       except Exception as e:
           print(f'⚠️  Migrations skipped: {str(e)[:100]}')
       "
+      # Start the app
       uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: DATABASE_URL
