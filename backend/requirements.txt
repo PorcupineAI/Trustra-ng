@@ -3,12 +3,9 @@ uvicorn[standard]==0.24.0
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
 python-dotenv==1.0.0
-pydantic==2.5.0
+pydantic>=2.5.0,<3.0.0  # Changed to allow newer versions
 pydantic-settings==2.1.0
 alembic==1.13.0
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 requests==2.31.0
-alembic==1.13.0
-psycopg2-binary==2.9.9
-# ... keep existing packages
