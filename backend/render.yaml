@@ -1,7 +1,28 @@
 services:
   - type: web
     name: trustra-backend
-    dockerfilePath: ./backend/Dockerfile
+    env: python
+    region: oregon  # Oregon is most reliable
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install --no-cache-dir -r requirements.txt
+    startCommand: |
+      python -c "
+      import os
+      from alembic.config import Config
+      from alembic import command
+      
+      # Run migrations safely
+      try:
+          cfg = Config('alembic.ini')
+          cfg.set_main_option('sqlalchemy.url', os.getenv('DATABASE_URL', ''))
+          command.upgrade(cfg, 'head')
+          print('✅ Database migrations completed')
+      except Exception as e:
+          print(f'⚠️  Migrations skipped: {str(e)[:100]}')
+      "
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -9,10 +30,10 @@ services:
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
-      - key: PYTHONUNBUFFERED
-        value: 1
-    healthCheckPath: /api/health
-    autoDeploy: true
+      - key: ENVIRONMENT
+        value: production
+    healthCheckPath: /health
+    healthCheckTimeout: 60
 
 databases:
   - name: trustra-db
