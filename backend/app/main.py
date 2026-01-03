@@ -1,35 +1,38 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import users, escrow, webhook, auth, admin, dispute, whatsapp
+import os
 
-app = FastAPI(title="Trustra NG")
+app = FastAPI(
+    title="Trustra NG",
+    version="1.0.0",
+    docs_url="/docs" if os.getenv("ENVIRONMENT") != "production" else None,
+    redoc_url="/redoc" if os.getenv("ENVIRONMENT") != "production" else None,
+)
 
-# Add CORS for frontend
+# CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_origins=["*"],  # Configure properly in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(users)
-app.include_router(escrow)
-app.include_router(webhook)
-app.include_router(auth)
-app.include_router(admin)
-app.include_router(dispute)
-app.include_router(whatsapp)
+# Import routers
+from app.routes import auth, users, escrow, admin, webhook, dispute
+
+# Include routers
+app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(escrow.router)
+app.include_router(admin.router)
+app.include_router(webhook.router)
+app.include_router(dispute.router)
 
 @app.get("/")
-def health():
-    return {"status": "Trustra backend running"}
+def root():
+    return {"status": "Trustra NG API", "version": "1.0.0"}
 
-@app.get("/api/health")
-def api_health():
+@app.get("/health")
+def health_check():
     return {"status": "healthy", "service": "Trustra NG"}
-
-# Add catch-all for frontend routing in production
-@app.get("/api/{path:path}")
-def catch_all(path: str):
-    return {"error": f"API endpoint /api/{path} not found"}
