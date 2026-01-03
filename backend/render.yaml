@@ -1,22 +1,7 @@
 services:
   - type: web
     name: trustra-backend
-    env: python
-    buildCommand: |
-      python --version
-      pip install --upgrade pip setuptools wheel
-      pip install -r requirements.txt
-    startCommand: |
-      # First try to run migrations
-      python -c "
-      try:
-          from run_migrations import run_migrations
-          run_migrations()
-      except Exception as e:
-          print(f'Migration warning: {e}')
-      "
-      # Start the app
-      uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers
+    dockerfilePath: ./backend/Dockerfile
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -25,3 +10,9 @@ services:
       - key: SECRET_KEY
         generateValue: true
     healthCheckPath: /api/health
+
+databases:
+  - name: trustra-db
+    databaseName: trustra
+    user: trustra_user
+    plan: free
