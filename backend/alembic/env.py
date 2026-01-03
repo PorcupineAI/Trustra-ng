@@ -5,13 +5,17 @@ from alembic import context
 import sys
 import os
 
-# Add the app directory to the Python path
+# Add app directory to path
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from app.database import Base
-from app.models import user, escrow, revenue, playing_with_neon, dispute, risk
+from app.models import user, escrow, revenue, playing_with_neon, dispute, risk_log
+from app.config import settings
 
 config = context.config
+
+# Override sqlalchemy.url with environment variable
+config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -37,7 +41,8 @@ def run_migrations_online() -> None:
     )
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, 
+            target_metadata=target_metadata
         )
         with context.begin_transaction():
             context.run_migrations()
