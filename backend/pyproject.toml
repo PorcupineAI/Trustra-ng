@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trustra-backend"
+version = "0.1.0"
+description = "Trustra NG Backend"
+requires-python = ">=3.11,<3.13"  # Restrict Python version
+dependencies = [
+    "fastapi==0.104.1",
+    "uvicorn[standard]==0.24.0",
+    "sqlalchemy==2.0.23",
+    "psycopg2-binary==2.9.9",
+    "python-dotenv==1.0.0",
+    "pydantic==2.6.1",  # Newer version
+    "pydantic-settings==2.1.0",
+    "alembic==1.13.0",
+    "python-jose[cryptography]==3.3.0",
+    "passlib[bcrypt]==1.7.4",
+    "requests==2.31.0",
+]
+
+[tool.poetry]
+name = "trustra-backend"
+version = "0.1.0"
+description = "Trustra NG Backend"
+authors = ["Your Name <your@email.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"  # Pin to Python 3.11
+# ... same dependencies as above
