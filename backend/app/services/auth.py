@@ -1,16 +1,25 @@
-from pydantic_settings import BaseSettings
-from pydantic import Field
+from datetime import datetime, timedelta
+from jose import jwt
+from passlib.context import CryptContext
+from app.config import settings
 
-class Settings(BaseSettings):
-    DATABASE_URL: str = Field(..., env="DATABASE_URL")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    SECRET_KEY: str = Field(..., env="SECRET_KEY")
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
-settings = Settings()
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+def verify_password(password: str, hashed: str) -> bool:
+    return pwd_context.verify(password, hashed)
+
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
