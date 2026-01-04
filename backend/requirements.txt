@@ -1,13 +1,11 @@
-# Optimized for Render - No Rust compilation needed
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-sqlalchemy==2.0.23
-psycopg2-binary==2.9.9
-python-dotenv==1.0.0
-pydantic==2.5.3  # Pre-built wheel available
-pydantic-settings==2.1.0
-alembic==1.13.0
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-requests==2.31.0
-greenlet==3.0.3  # Required for SQLAlchemy async
+fastapi>=0.128.0
+uvicorn>=0.40.0
+sqlalchemy>=2.0.45
+psycopg2-binary>=2.9.11
+python-dotenv>=1.2.1
+pydantic>=2.12.0
+pydantic-settings>=2.12.0
+alembic>=1.17.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+requests>=2.32.0
