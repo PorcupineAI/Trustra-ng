@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from app.routes import users, escrow, admin
+from app.routes.users import router as users_router
+from app.routes.auth import router as auth_router
+from app.routes.payments import router as payments_router
 
-app = FastAPI(title="Trustra NG")
+app = FastAPI()
 
-app.include_router(users)
-app.include_router(escrow)
-app.include_router(admin)
-
-@app.get("/")
-def root():
-    return {"status": "Trustra NG live"}
+app.include_router(users_router)
+app.include_router(auth_router)
+app.include_router(payments_router)
